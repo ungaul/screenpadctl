@@ -47,6 +47,7 @@ struct Config {
     std::string lastMode = "trackpad";
     int brightness = 0;
     int leaseMs = 8000;
+    std::string launcherScale;
     bool fake = false;
 };
 
@@ -70,6 +71,7 @@ void loadFile(Config& c, const std::string& path) {
         else if (k == "mode" && (v == "trackpad" || v == "screenpad" || v == "off")) c.lastMode = v;
         else if (k == "brightness") c.brightness = std::atoi(v.c_str());
         else if (k == "lease_ms") c.leaseMs = std::atoi(v.c_str());
+        else if (k == "launcher_scale") c.launcherScale = v;
     }
 }
 
@@ -430,7 +432,7 @@ private:
         const auto s = session::find();
         if (!s) return;
         logf("starting the launcher for %s", s->user.c_str());
-        launcherPid_ = session::spawnLauncher(*s);
+        launcherPid_ = session::spawnLauncher(*s, cfg_.launcherScale);
     }
 
     void checkResume() {
