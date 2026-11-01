@@ -11,7 +11,7 @@ options=(!debug)
 install=screenpadctl.install
 
 build() {
-    cmake -S "$startdir/../.." -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+    cmake -S "$startdir/.." -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
     cmake --build build
 }
 

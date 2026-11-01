@@ -2,6 +2,7 @@ name: release
 
 on:
   push:
+    branches: [main]
     tags: ["v*"]
   pull_request:
   workflow_dispatch:
@@ -9,9 +10,12 @@ on:
 permissions:
   contents: write
 
+env:
+  RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || format('v1.0.{0}', github.run_number) }}
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container: ${{ matrix.image }}
     strategy:
       fail-fast: false
@@ -29,7 +33,7 @@ jobs:
     steps:
       - name: Install dependencies
         run: ${{ matrix.install }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
       - name: Build
@@ -37,8 +41,8 @@ jobs:
       - name: Test
         run: ctest --test-dir build --output-on-failure
       - name: Package
-        run: cd build && cpack -G ${{ matrix.generator }}
-      - uses: actions/upload-artifact@v4
+        run: cd build && cpack -G ${{ matrix.generator }} -D CPACK_PACKAGE_VERSION=${RELEASE_TAG#v}
+      - uses: actions/upload-artifact@v6
         with:
           name: package-${{ matrix.generator }}
           path: |
@@ -47,15 +51,17 @@ jobs:
             build/screenpadctl-*.tar.gz
 
   publish:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           path: packages
           merge-multiple: true
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          target_commitish: ${{ github.sha }}
           generate_release_notes: true
           files: packages/*

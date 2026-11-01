@@ -6,6 +6,7 @@ CMakeUserPresets.json
 /*.png
 *.log
 *~
-packaging/arch/pkg/
-packaging/arch/src/
+arch/pkg/
+arch/src/
 *.pkg.tar.*
+tests/

@@ -9,6 +9,8 @@ C++ and Qt6, no Python. Tested on a ZenBook UX334FA with Arch Linux and Hyprland
 
 ## Install
 
+Requires systemd and Hyprland.
+
 Download the `.deb`, `.rpm` or `.tar.gz` from the Releases page and install it with your package manager, then enable the daemon:
 
 ```
@@ -18,8 +20,9 @@ sudo systemctl enable --now screenpadctld
 On Arch, build the package yourself:
 
 ```
-git clone https://github.com/ungaul/screenpadctl && cd screenpadctl/packaging/arch
+git clone https://github.com/ungaul/screenpadctl && cd screenpadctl/arch
 makepkg -si
+sudo systemctl enable --now screenpadctld
 ```
 
 From source on any distribution: `cmake -B build -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build && sudo cmake --install build`. Needs Qt 6.5+ (base and declarative).
