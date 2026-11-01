@@ -89,6 +89,7 @@ void Hyprland::configurePad() {
             const QString position = QString("%1x%2").arg(m.value("x").toInt()).arg(m.value("y").toInt());
             hyprctlOk({"eval", "hl.monitor({ output = " + luaStr(pad_) + ", mode = " + luaStr(mode) + ", position = " + luaStr(position) + ", scale = 2, transform = 3 })"});
         }
+        hyprctlOk({"eval", "hl.window_rule({ name = \"screenpadctl-launcher\", match = { class = \"^screenpadctl-launcher$\" }, monitor = " + luaStr(pad_) + ", float = false, fullscreen = true })"});
         hyprctlOk({"eval", "hl.workspace_rule({ workspace = \"name:screenpad\", monitor = " + luaStr(pad_) + ", default = true, persistent = true })"});
         return;
     }
