@@ -52,8 +52,13 @@ void Hyprland::handleEvent(const QString& line) {
     const qsizetype sep = line.indexOf(">>");
     if (sep < 0) return;
     const QString ev = line.left(sep);
+    const QString payload = line.mid(sep + 2);
+    if (ev == "monitorremoved" && payload == pad_) padRemoved_ = true;
+    else if ((ev == "monitoradded" && payload == pad_) || (ev == "monitoraddedv2" && payload.section(',', 1, 1) == pad_)) {
+        if (padRemoved_) emit padReturned();
+    }
     if (ev != "focusedmon" && ev != "focusedmonv2") return;
-    const QString mon = line.mid(sep + 2).section(',', 0, 0);
+    const QString mon = payload.section(',', 0, 0);
     if (!mon.isEmpty() && mon != pad_) last_ = mon;
 }
 

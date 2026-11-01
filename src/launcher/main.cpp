@@ -112,6 +112,8 @@ int main(int argc, char** argv) {
     if (cli.isSet(windowedOpt)) { win->resize(pad->size()); win->show(); }
     else win->showFullScreen();
 
+    QObject::connect(&hypr, &Hyprland::padReturned, &app, &QGuiApplication::quit);
+
     if (!cli.isSet(noDaemonOpt)) {
 
         QString touchDev;

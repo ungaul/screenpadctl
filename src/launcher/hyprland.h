@@ -18,6 +18,9 @@ public:
 
     void configurePad();
 
+signals:
+    void padReturned();
+
 private:
     void readEvents();
     void handleEvent(const QString& line);
@@ -27,4 +30,5 @@ private:
     QByteArray buf_;
     QString pad_, fallback_, last_;
     bool active_ = false;
+    bool padRemoved_ = false;
 };
