@@ -40,9 +40,11 @@ Window {
     Image {
         anchors.fill: parent
         visible: ui.showWallpaper && theme.wallpaper !== ""
-        source: theme.wallpaper
+        source: ui.showWallpaper ? theme.wallpaper : ""
+        sourceSize.width: Math.round(root.width * Screen.devicePixelRatio)
         fillMode: Image.PreserveAspectCrop
         asynchronous: true
+        cache: false
     }
     Rectangle {
         anchors.fill: parent
