@@ -1,0 +1,61 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: archlinux:latest
+            generator: TGZ
+            install: pacman -Syu --noconfirm --needed base-devel cmake ninja git qt6-base qt6-declarative
+          - image: debian:trixie
+            generator: DEB
+            install: apt-get update && apt-get install -y build-essential cmake ninja-build git file dpkg-dev qt6-base-dev qt6-declarative-dev qt6-declarative-dev-tools
+          - image: fedora:latest
+            generator: RPM
+            install: dnf install -y gcc-c++ cmake ninja-build git rpm-build qt6-qtbase-devel qt6-qtdeclarative-devel
+    steps:
+      - name: Install dependencies
+        run: ${{ matrix.install }}
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+      - name: Package
+        run: cd build && cpack -G ${{ matrix.generator }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.generator }}
+          path: |
+            build/screenpadctl-*.deb
+            build/screenpadctl-*.rpm
+            build/screenpadctl-*.tar.gz
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: packages
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: packages/*

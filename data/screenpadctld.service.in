@@ -1,0 +1,13 @@
+[Unit]
+Description=ASUS ScreenPad daemon (power, leased touch mode, trackpad)
+After=multi-user.target
+
+[Service]
+Type=simple
+StateDirectory=screenpadctl
+ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/screenpadctld
+ExecStopPost=-@CMAKE_INSTALL_FULL_BINDIR@/screenpadctld --revert
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

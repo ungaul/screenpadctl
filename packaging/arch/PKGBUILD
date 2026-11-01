@@ -1,0 +1,24 @@
+pkgname=screenpadctl
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='ScreenXpert-like interface for the ASUS ScreenPad: touch launcher, trackpad zone, power and brightness'
+arch=(x86_64)
+url='https://github.com/ungaul/screenpadctl'
+license=(MIT)
+depends=(qt6-base qt6-declarative)
+makedepends=(cmake ninja)
+options=(!debug)
+install=screenpadctl.install
+
+build() {
+    cmake -S "$startdir/../.." -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+    cmake --build build
+}
+
+check() {
+    ctest --test-dir build --output-on-failure
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}

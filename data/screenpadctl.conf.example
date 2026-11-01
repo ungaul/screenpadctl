@@ -1,0 +1,4 @@
+touch_name = GDX1515:00 27C6:01F4
+i2c_id = i2c-GDX1515:00
+rotation = 270
+lease_ms = 8000

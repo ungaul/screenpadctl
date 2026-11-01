@@ -1,0 +1,13 @@
+post_install() {
+    systemctl daemon-reload
+    echo "Enable the daemon: sudo systemctl enable --now screenpadctld"
+}
+
+post_upgrade() {
+    systemctl daemon-reload
+    systemctl try-restart screenpadctld
+}
+
+pre_remove() {
+    systemctl disable --now screenpadctld 2>/dev/null || true
+}

@@ -1,0 +1,11 @@
+build/
+.cache/
+.qt/
+compile_commands.json
+CMakeUserPresets.json
+/*.png
+*.log
+*~
+packaging/arch/pkg/
+packaging/arch/src/
+*.pkg.tar.*
